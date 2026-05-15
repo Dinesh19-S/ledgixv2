@@ -1,0 +1,77 @@
+{
+  "name": "ledgix",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "electron:dev": "cross-env IS_DEV=true electron .",
+    "dist": "npm run build && electron-builder"
+  },
+  "build": {
+    "appId": "com.ledgix.app",
+    "productName": "Ledgix",
+    "npmRebuild": false,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "!**/node_modules/**/{CHANGELOG.md,README.md,readme.md,LICENSE,license,LICENCE,.travis.yml,tsconfig.json,*.ts,*.map}",
+      "!**/node_modules/**/{test,tests,__tests__,powered-test,example,examples,docs,.github,.vscode}",
+      "!**/node_modules/.cache/**"
+    ],
+    "asar": true,
+    "compression": "normal",
+    "win": {
+      "target": "nsis",
+      "icon": "public/logo.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false,
+      "deleteAppDataOnUninstall": false,
+      "installerSidebar": null
+    }
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.0",
+    "@types/file-saver": "^2.0.7",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "autoprefixer": "^10.5.0",
+    "cross-env": "^10.1.0",
+    "electron": "^41.5.2",
+    "electron-builder": "^26.8.1",
+    "postcss": "^8.5.14",
+    "tailwindcss": "^4.3.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.0.12",
+    "wait-on": "^9.0.10"
+  },
+  "dependencies": {
+    "@emailjs/browser": "^4.4.1",
+    "@supabase/supabase-js": "^2.105.4",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "exceljs": "^4.4.0",
+    "file-saver": "^2.0.5",
+    "framer-motion": "^12.38.0",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.7",
+    "lucide-react": "^1.14.0",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "react-hot-toast": "^2.6.0",
+    "react-router-dom": "^7.15.0",
+    "tailwind-merge": "^3.6.0",
+    "tailwindcss-animate": "^1.0.7",
+    "xlsx": "^0.18.5"
+  }
+}
