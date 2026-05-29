@@ -8,7 +8,7 @@ export default function Home() {
       <nav className="h-20 border-b border-slate-100 px-8 flex items-center justify-between sticky top-0 bg-white/80 backdrop-blur-md z-50">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 flex items-center justify-center">
-            <img src="/logo.png" alt="Ledgix Logo" className="w-10 h-10 object-contain rounded-xl shadow-lg shadow-indigo-900/10" />
+            <img src="./logo.png" alt="Ledgix Logo" className="w-10 h-10 object-contain rounded-xl shadow-lg shadow-indigo-900/10" />
           </div>
           <h1 className="text-xl font-bold text-slate-900 leading-tight">Ledgix</h1>
         </div>

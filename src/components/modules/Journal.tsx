@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Plus, Search, Edit2, Trash2, X, Calendar, ArrowRightLeft, MessageSquare, IndianRupee } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, X, Calendar, MessageSquare, IndianRupee } from 'lucide-react';
 import type { JournalEntry, Party } from '../../types';
 import { storage } from '../../services/storage';
+import SearchablePartySelect from './SearchablePartySelect';
 import toast from 'react-hot-toast';
 
 interface JournalProps {
@@ -11,6 +12,8 @@ interface JournalProps {
 }
 
 export default function Journal({ journals, parties, onUpdate }: JournalProps) {
+
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [editingJournal, setEditingJournal] = useState<JournalEntry | null>(null);
@@ -216,38 +219,20 @@ export default function Journal({ journals, parties, onUpdate }: JournalProps) {
                     className="w-full bg-slate-100 border border-slate-300 rounded-xl py-2.5 px-4 text-sm font-black focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500/50 transition-all"
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-black text-rose-600 uppercase tracking-wider flex items-center space-x-2">
-                    <ArrowRightLeft size={14} />
-                    <span>Debit Account (Dr)</span>
-                  </label>
-                  <select 
-                    required
-                    value={formData.debitParty}
-                    onChange={(e) => setFormData({...formData, debitParty: e.target.value})}
-                    className="w-full bg-slate-100 border border-slate-300 rounded-xl py-2.5 px-4 text-sm font-bold focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500/50 transition-all"
-                  >
-                    {parties.map(p => (
-                      <option key={p.id} value={p.name}>{p.name}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-black text-emerald-600 uppercase tracking-wider flex items-center space-x-2">
-                    <ArrowRightLeft size={14} />
-                    <span>Credit Account (Cr)</span>
-                  </label>
-                  <select 
-                    required
-                    value={formData.creditParty}
-                    onChange={(e) => setFormData({...formData, creditParty: e.target.value})}
-                    className="w-full bg-slate-100 border border-slate-300 rounded-xl py-2.5 px-4 text-sm font-bold focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500/50 transition-all"
-                  >
-                    {parties.map(p => (
-                      <option key={p.id} value={p.name}>{p.name}</option>
-                    ))}
-                  </select>
-                </div>
+                <SearchablePartySelect
+                  parties={parties}
+                  selectedParty={formData.debitParty}
+                  onSelect={(name) => setFormData({ ...formData, debitParty: name })}
+                  label="Debit Account (Dr)"
+                />
+
+                <SearchablePartySelect
+                  parties={parties}
+                  selectedParty={formData.creditParty}
+                  onSelect={(name) => setFormData({ ...formData, creditParty: name })}
+                  label="Credit Account (Cr)"
+                />
+
                 <div className="col-span-2 space-y-2">
                   <label className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center space-x-2">
                     <MessageSquare size={14} />

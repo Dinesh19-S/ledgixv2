@@ -19,10 +19,16 @@ export default function App() {
 
   useEffect(() => {
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setLoading(false);
-    });
+    supabase.auth.getSession()
+      .then(({ data: { session } }) => {
+        setSession(session);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Failed to get session:', err);
+        setSession(null);
+        setLoading(false);
+      });
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -37,7 +43,7 @@ export default function App() {
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="flex flex-col items-center space-y-6">
           <div className="w-16 h-16 flex items-center justify-center animate-pulse">
-            <img src="/logo.png" alt="Ledgix Logo" className="w-16 h-16 object-contain" />
+            <img src="./logo.png" alt="Ledgix Logo" className="w-16 h-16 object-contain" />
           </div>
           <p className="text-sm font-black text-slate-900 uppercase tracking-widest animate-pulse">Loading Ledgix...</p>
         </div>

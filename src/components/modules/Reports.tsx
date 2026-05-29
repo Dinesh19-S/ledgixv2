@@ -1,7 +1,8 @@
-import { useState, useMemo } from 'react'; // Forced reload for imports
-import { FileText, Download, Calendar, User, Search, ArrowUpRight, ArrowDownLeft, Wallet } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { FileText, Download, Calendar, Search, ArrowUpRight, ArrowDownLeft, Wallet } from 'lucide-react';
 import type { Party, PaymentEntry } from '../../types';
 import { exportService } from '../../services/export';
+import SearchablePartySelect from './SearchablePartySelect';
 import toast from 'react-hot-toast';
 
 interface ReportsProps {
@@ -10,10 +11,13 @@ interface ReportsProps {
 }
 
 export default function Reports({ parties, payments }: ReportsProps) {
+
+
   const [selectedParty, setSelectedParty] = useState<string>(parties[0]?.name || '');
   const [fromDate, setFromDate] = useState(new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0]);
   const [toDate, setToDate] = useState(new Date().toISOString().split('T')[0]);
-  
+
+
 
   const ledgerData = useMemo(() => {
     const party = parties.find(p => p.name === selectedParty);
@@ -105,21 +109,13 @@ export default function Reports({ parties, payments }: ReportsProps) {
 
       {/* Filters */}
       <div className="bg-white border border-slate-300 p-6 rounded-3xl grid grid-cols-3 gap-6 shadow-md print:hidden">
-        <div className="space-y-2">
-          <label className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center space-x-2">
-            <User size={14} className="text-indigo-600" />
-            <span>Select Party</span>
-          </label>
-          <select 
-            value={selectedParty}
-            onChange={(e) => setSelectedParty(e.target.value)}
-            className="w-full bg-slate-100 border border-slate-300 rounded-xl py-2.5 px-4 text-sm font-black focus:ring-2 focus:ring-indigo-500/20 transition-all"
-          >
-            {parties.map(p => (
-              <option key={p.id} value={p.name}>{p.name}</option>
-            ))}
-          </select>
-        </div>
+        <SearchablePartySelect
+          parties={parties}
+          selectedParty={selectedParty}
+          onSelect={setSelectedParty}
+          label="Search & Select Party"
+        />
+
         <div className="space-y-2">
           <label className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center space-x-2">
             <Calendar size={14} className="text-indigo-600" />

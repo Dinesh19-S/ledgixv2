@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TrendingUp, Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
+import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../services/supabase';
 import toast from 'react-hot-toast';
@@ -32,8 +32,8 @@ export default function Login() {
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden flex flex-col">
         <div className="p-8 text-center space-y-2 border-b border-slate-50">
-          <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-900/20 mx-auto mb-4">
-            <TrendingUp size={32} className="text-white" />
+          <div className="w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <img src="./logo.png" alt="Ledgix Logo" className="w-16 h-16 object-contain rounded-2xl shadow-xl shadow-indigo-900/10" />
           </div>
           <h2 className="text-2xl font-black text-slate-900">Welcome Back</h2>
           <p className="text-slate-500 text-sm">Sign in to access your cloud ledger.</p>

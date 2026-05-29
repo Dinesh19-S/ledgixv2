@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Plus, Search, Edit2, Trash2, X, Calendar, User, CreditCard, ArrowRight, IndianRupee } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, X, Calendar, CreditCard, ArrowRight, IndianRupee } from 'lucide-react';
 import type { PaymentEntry, Party } from '../../types';
 import { storage } from '../../services/storage';
+import SearchablePartySelect from './SearchablePartySelect';
 import toast from 'react-hot-toast';
+
 
 interface PaymentsProps {
   payments: PaymentEntry[];
@@ -85,11 +87,15 @@ export default function Payments({ payments, parties, onUpdate }: PaymentsProps)
     }
   };
 
-  const filteredPayments = payments.filter(p => 
-    p.partyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.voucherNo.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.remarks.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredPayments = payments.filter((p, idx) => {
+    const search = searchQuery.toLowerCase().trim();
+    return (
+      p.partyName.toLowerCase().includes(search) ||
+      p.voucherNo.toLowerCase().includes(search) ||
+      p.remarks.toLowerCase().includes(search) ||
+      (idx + 1).toString() === search
+    );
+  });
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -223,23 +229,13 @@ export default function Payments({ payments, parties, onUpdate }: PaymentsProps)
                     className="w-full bg-slate-100 border border-slate-300 rounded-xl py-2.5 px-4 text-sm font-black focus:ring-2 focus:ring-indigo-500/20 transition-all"
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center space-x-2">
-                    <User size={14} />
-                    <span>Select Party</span>
-                  </label>
-                  <select 
-                    required
-                    value={formData.partyName}
-                    onChange={(e) => setFormData({...formData, partyName: e.target.value})}
-                    className="w-full bg-slate-100 border border-slate-300 rounded-xl py-2.5 px-4 text-sm font-black focus:ring-2 focus:ring-indigo-500/20 transition-all"
-                  >
-                    <option value="" disabled>Choose a party...</option>
-                    {parties.map(p => (
-                      <option key={p.id} value={p.name}>{p.name}</option>
-                    ))}
-                  </select>
-                </div>
+                <SearchablePartySelect
+                  parties={parties}
+                  selectedParty={formData.partyName}
+                  onSelect={(name) => setFormData({ ...formData, partyName: name })}
+                  label="Select Party"
+                />
+
                 <div className="space-y-2">
                   <label className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center space-x-2">
                     <IndianRupee size={14} />

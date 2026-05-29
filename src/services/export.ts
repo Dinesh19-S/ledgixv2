@@ -670,7 +670,28 @@ export const exportService = {
         });
 
         // Add Data
-        rows.forEach(row => ws.addRow(row));
+        rows.forEach((row, rowIndex) => {
+          const newRow = ws.addRow(row.map((cell, colIndex) => {
+            // First column is usually ID, replace with numeric index for the sheet
+            if (colIndex === 0) return rowIndex + 1;
+            // Try to parse as number if it looks like one
+            if (!isNaN(Number(cell)) && cell !== '' && !cell.includes('-')) return Number(cell);
+            return cell;
+          }));
+
+          newRow.eachCell((cell, colIndex) => {
+            cell.border = {
+              top: { style: 'thin' },
+              left: { style: 'thin' },
+              bottom: { style: 'thin' },
+              right: { style: 'thin' }
+            };
+            if (typeof cell.value === 'number' && colIndex > 1) {
+              cell.numFmt = '#,##0.00';
+              cell.alignment = { horizontal: 'right' };
+            }
+          });
+        });
 
         // Auto-width
         ws.columns.forEach(col => {
@@ -678,9 +699,9 @@ export const exportService = {
         });
       };
 
-      addSheet('Parties', ['ID', 'Name', 'Mobile', 'Address', 'GST', 'Opening Balance', 'Balance Type', 'Created At'], data.parties);
-      addSheet('Payments', ['ID', 'Voucher No', 'Date', 'Party Name', 'Payment Type', 'Transaction Type', 'Amount', 'Remarks', 'Created At'], data.payments);
-      addSheet('Journals', ['ID', 'Voucher No', 'Date', 'Debit Party', 'Credit Party', 'Amount', 'Remarks', 'Created At'], data.journals);
+      addSheet('Parties', ['S.No', 'Name', 'Mobile', 'Address', 'GST', 'Opening Balance', 'Balance Type', 'Created At'], data.parties);
+      addSheet('Payments', ['S.No', 'Voucher No', 'Date', 'Party Name', 'Payment Type', 'Transaction Type', 'Amount', 'Remarks', 'Created At'], data.payments);
+      addSheet('Journals', ['S.No', 'Voucher No', 'Date', 'Debit Party', 'Credit Party', 'Amount', 'Remarks', 'Created At'], data.journals);
       addSheet('Trial Balance', ['Party Name', 'Opening Balance', 'Total Debit', 'Total Credit', 'Net Balance', 'Type'], data.trialBalance);
       addSheet('Profit & Loss', ['Account Description', 'Debit (Expense)', 'Credit (Income)', 'Net Result'], data.pl);
 

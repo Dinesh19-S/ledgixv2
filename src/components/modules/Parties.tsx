@@ -69,11 +69,15 @@ export default function Parties({ parties, onUpdate }: PartiesProps) {
     }
   };
 
-  const filteredParties = parties.filter(p => 
-    p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.mobile.includes(searchQuery) ||
-    p.gst.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredParties = parties.filter((p, idx) => {
+    const search = searchQuery.toLowerCase().trim();
+    return (
+      p.name.toLowerCase().includes(search) ||
+      p.mobile.includes(search) ||
+      p.gst.toLowerCase().includes(search) ||
+      (idx + 1).toString() === search
+    );
+  });
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -133,11 +137,11 @@ export default function Parties({ parties, onUpdate }: PartiesProps) {
                   <td className="px-6 py-4">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700 group-hover:bg-indigo-600 group-hover:text-white transition-all font-black">
-                        {party.name.charAt(0)}
+                        {parties.indexOf(party) + 1}
                       </div>
                       <div>
                         <p className="text-sm font-black text-slate-900">{party.name}</p>
-                        <p className="text-[10px] text-slate-500 font-mono font-bold tracking-tight uppercase">{party.id}</p>
+                        <p className="text-[10px] text-slate-500 font-mono font-bold tracking-tight uppercase">ID: {party.id.split('-')[0]}</p>
                       </div>
                     </div>
                   </td>

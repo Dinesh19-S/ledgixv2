@@ -15,9 +15,9 @@ interface SpreadsheetProps {
 type SheetTab = 'Parties' | 'Payments' | 'Journals' | 'Trial Balance' | 'P&L';
 
 // Column definitions per sheet
-const PARTY_COLUMNS = ['ID', 'Name', 'Mobile', 'Address', 'GST', 'Opening Balance', 'Balance Type', 'Created At'];
-const PAYMENT_COLUMNS = ['ID', 'Voucher No', 'Date', 'Party Name', 'Payment Type', 'Transaction Type', 'Amount', 'Remarks', 'Created At'];
-const JOURNAL_COLUMNS = ['ID', 'Voucher No', 'Date', 'Debit Party', 'Credit Party', 'Amount', 'Remarks', 'Created At'];
+const PARTY_COLUMNS = ['S.No', 'Name', 'Mobile', 'Address', 'GST', 'Opening Balance', 'Balance Type', 'Created At'];
+const PAYMENT_COLUMNS = ['S.No', 'Voucher No', 'Date', 'Party Name', 'Payment Type', 'Transaction Type', 'Amount', 'Remarks', 'Created At'];
+const JOURNAL_COLUMNS = ['S.No', 'Voucher No', 'Date', 'Debit Party', 'Credit Party', 'Amount', 'Remarks', 'Created At'];
 const TRIAL_COLUMNS = ['Party Name', 'Opening Balance', 'Total Debit', 'Total Credit', 'Net Balance', 'Type'];
 const PL_COLUMNS = ['Account Description', 'Debit (Expense)', 'Credit (Income)', 'Net Result'];
 
@@ -34,22 +34,22 @@ function colLetter(index: number): string {
 
 // Map data arrays to 2D string arrays for rendering
 function partiesToGrid(parties: Party[]): string[][] {
-  return parties.map(p => [
-    p.id, p.name, p.mobile, p.address, p.gst,
+  return parties.map((p, idx) => [
+    (idx + 1).toString(), p.name, p.mobile, p.address, p.gst,
     p.openingBalance.toString(), p.balanceType, p.createdAt
   ]);
 }
 
 function paymentsToGrid(payments: PaymentEntry[]): string[][] {
-  return payments.map(p => [
-    p.id, p.voucherNo, p.date, p.partyName, p.paymentType,
+  return payments.map((p, idx) => [
+    (idx + 1).toString(), p.voucherNo, p.date, p.partyName, p.paymentType,
     p.transactionType, p.amount.toString(), p.remarks, p.createdAt
   ]);
 }
 
 function journalsToGrid(journals: JournalEntry[]): string[][] {
-  return journals.map(j => [
-    j.id, j.voucherNo, j.date, j.debitParty, j.creditParty,
+  return journals.map((j, idx) => [
+    (idx + 1).toString(), j.voucherNo, j.date, j.debitParty, j.creditParty,
     j.amount.toString(), j.remarks, j.createdAt
   ]);
 }
@@ -266,8 +266,8 @@ export default function Spreadsheet({ parties, payments, journals, onUpdate }: S
   const handleSave = async () => {
     try {
       // Reconstruct objects from grids
-      const newParties: Party[] = partiesGrid.map(row => ({
-        id: row[0],
+      const newParties: Party[] = partiesGrid.map((row, i) => ({
+        id: parties[i]?.id || `NEW-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
         name: row[1],
         mobile: row[2],
         address: row[3],
@@ -277,8 +277,8 @@ export default function Spreadsheet({ parties, payments, journals, onUpdate }: S
         createdAt: row[7]
       }));
 
-      const newPayments: PaymentEntry[] = paymentsGrid.map(row => ({
-        id: row[0],
+      const newPayments: PaymentEntry[] = paymentsGrid.map((row, i) => ({
+        id: payments[i]?.id || `NEW-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
         voucherNo: row[1],
         date: row[2],
         partyName: row[3],
@@ -289,8 +289,8 @@ export default function Spreadsheet({ parties, payments, journals, onUpdate }: S
         createdAt: row[8]
       }));
 
-      const newJournals: JournalEntry[] = journalsGrid.map(row => ({
-        id: row[0],
+      const newJournals: JournalEntry[] = journalsGrid.map((row, i) => ({
+        id: journals[i]?.id || `NEW-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
         voucherNo: row[1],
         date: row[2],
         debitParty: row[3],
@@ -313,7 +313,6 @@ export default function Spreadsheet({ parties, payments, journals, onUpdate }: S
 
   // Add empty row
   const handleAddRow = () => {
-    const newId = `NEW-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
     const today = new Date().toISOString().split('T')[0];
     let newRow: string[];
 
@@ -324,13 +323,13 @@ export default function Spreadsheet({ parties, payments, journals, onUpdate }: S
 
     switch (activeSheet) {
       case 'Parties':
-        newRow = [newId, '', '', '', '', '0', 'Debit', today];
+        newRow = [(grid.length + 1).toString(), '', '', '', '', '0', 'Debit', today];
         break;
       case 'Payments':
-        newRow = [newId, `VCH-${(paymentsGrid.length + 1).toString().padStart(5, '0')}`, today, '', 'Cash', 'Pay', '0', '', today];
+        newRow = [(grid.length + 1).toString(), `VCH-${(paymentsGrid.length + 1).toString().padStart(5, '0')}`, today, '', 'Cash', 'Pay', '0', '', today];
         break;
       case 'Journals':
-        newRow = [newId, `JV-${(journalsGrid.length + 1).toString().padStart(5, '0')}`, today, '', '', '0', '', today];
+        newRow = [(grid.length + 1).toString(), `JV-${(journalsGrid.length + 1).toString().padStart(5, '0')}`, today, '', '', '0', '', today];
         break;
       default:
         return;

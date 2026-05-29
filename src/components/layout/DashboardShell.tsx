@@ -139,8 +139,28 @@ export default function DashboardShell() {
     };
   }, [refreshParties, refreshPayments, refreshJournals]);
 
-  const totalPayments = useMemo(() => payments.reduce((acc, curr) => acc + curr.amount, 0), [payments]);
-  const pendingAmount = useMemo(() => parties.reduce((acc, curr) => acc + curr.openingBalance, 0), [parties]);
+  const stats = useMemo(() => {
+    const totalPayments = payments.reduce((acc, curr) => acc + curr.amount, 0);
+    const totalInflow = payments
+      .filter(p => p.transactionType === 'Receive')
+      .reduce((acc, curr) => acc + curr.amount, 0);
+    
+    // Calculate current net pending amount (Receivable - Payable)
+    const netPending = parties.reduce((acc, party) => {
+      const partyPayments = payments.filter(p => p.partyName === party.name);
+      let balance = party.balanceType === 'Debit' ? party.openingBalance : -party.openingBalance;
+      partyPayments.forEach(p => {
+        balance += (p.transactionType === 'Pay' ? p.amount : -p.amount);
+      });
+      return acc + balance;
+    }, 0);
+
+    return {
+      totalPayments,
+      totalInflow,
+      netPending
+    };
+  }, [parties, payments]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -153,7 +173,7 @@ export default function DashboardShell() {
       <aside className="w-64 border-r border-slate-300 flex flex-col p-4 space-y-8 bg-white shrink-0 shadow-xl z-20">
         <div className="px-4 flex items-center space-x-3">
           <div className="w-10 h-10 flex items-center justify-center">
-            <img src="/logo.png" alt="Ledgix Logo" className="w-10 h-10 object-contain rounded-xl shadow-lg shadow-indigo-900/10" />
+            <img src="./logo.png" alt="Ledgix Logo" className="w-10 h-10 object-contain rounded-xl shadow-lg shadow-indigo-900/10" />
           </div>
           <div>
             <h1 className="text-lg font-black text-slate-900 leading-tight">Ledgix</h1>
@@ -232,10 +252,10 @@ export default function DashboardShell() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <StatCard title="Total Parties" value={parties.length} icon={Users} trend={12} color="indigo" />
-                <StatCard title="Total Payments" value={`₹${totalPayments.toLocaleString()}`} icon={DollarSign} trend={8} color="emerald" />
-                <StatCard title="Pending Amount" value={`₹${pendingAmount.toLocaleString()}`} icon={ArrowUpRight} trend={-2} color="rose" />
-                <StatCard title="Cash Flow" value="₹84,200" icon={ArrowDownLeft} trend={15} color="amber" />
+                <StatCard title="Total Parties" value={parties.length} icon={Users} trend={0} color="indigo" />
+                <StatCard title="Total Payments" value={`₹${stats.totalPayments.toLocaleString()}`} icon={DollarSign} trend={0} color="emerald" />
+                <StatCard title="Pending Amount" value={`₹${Math.abs(stats.netPending).toLocaleString()} ${stats.netPending >= 0 ? 'Dr' : 'Cr'}`} icon={ArrowUpRight} trend={0} color="rose" />
+                <StatCard title="Cash Flow" value={`₹${stats.totalInflow.toLocaleString()}`} icon={ArrowDownLeft} trend={0} color="amber" />
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

@@ -89,10 +89,16 @@ export default function Settings() {
       <div className="grid grid-cols-1 gap-8">
         {/* Profile Settings */}
         <div className="bg-white border border-slate-300 rounded-3xl overflow-hidden shadow-md">
-          <div className="p-6 border-b border-slate-300 bg-slate-50 flex items-center space-x-3">
+          <div className="p-6 border-b border-slate-300 bg-slate-50 flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 flex items-center justify-center">
+                <img src="./logo.png" alt="Ledgix Logo" className="w-8 h-8 object-contain rounded-lg" />
+              </div>
+              <h3 className="font-black text-slate-900 uppercase tracking-wider text-sm">Business Profile</h3>
+            </div>
             <User className="text-indigo-600" size={20} />
-            <h3 className="font-black text-slate-900 uppercase tracking-wider text-sm">Business Profile</h3>
           </div>
+
           <div className="p-8 grid grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Business Name</label>
