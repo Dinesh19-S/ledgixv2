@@ -7,10 +7,18 @@ import { auth } from './services/api';
 // We will create these screens next
 import LoginScreen from './screens/LoginScreen';
 import DashboardScreen from './screens/DashboardScreen';
+import PartiesScreen from './screens/PartiesScreen';
+import PaymentsScreen from './screens/PaymentsScreen';
+import JournalsScreen from './screens/JournalsScreen';
+import SettingsScreen from './screens/SettingsScreen';
 
 export type RootStackParamList = {
   Login: undefined;
   Dashboard: undefined;
+  Parties: undefined;
+  Payments: undefined;
+  Journals: undefined;
+  Settings: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -48,7 +56,13 @@ export default function App() {
         {userToken == null ? (
           <Stack.Screen name="Login" component={LoginScreen} initialParams={{ setUserToken }} />
         ) : (
-          <Stack.Screen name="Dashboard" component={DashboardScreen} initialParams={{ setUserToken }} />
+          <>
+            <Stack.Screen name="Dashboard" component={DashboardScreen} initialParams={{ setUserToken }} />
+            <Stack.Screen name="Parties" component={PartiesScreen} />
+            <Stack.Screen name="Payments" component={PaymentsScreen} />
+            <Stack.Screen name="Journals" component={JournalsScreen} />
+            <Stack.Screen name="Settings" component={SettingsScreen} />
+          </>
         )}
       </Stack.Navigator>
     </NavigationContainer>

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator }
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { api, auth } from '../services/api';
 
-export default function DashboardScreen({ route }: any) {
+export default function DashboardScreen({ route, navigation }: any) {
   const { setUserToken } = route.params;
   const [parties, setParties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,7 +38,22 @@ export default function DashboardScreen({ route }: any) {
       </View>
 
       <View style={styles.content}>
-        <Text style={styles.sectionTitle}>Your Parties ({parties.length})</Text>
+        <View style={styles.navGrid}>
+          <TouchableOpacity style={styles.navCard} onPress={() => navigation.navigate('Parties')}>
+            <Text style={styles.navText}>Parties</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navCard} onPress={() => navigation.navigate('Payments')}>
+            <Text style={styles.navText}>Payments</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navCard} onPress={() => navigation.navigate('Journals')}>
+            <Text style={styles.navText}>Journals</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navCard} onPress={() => navigation.navigate('Settings')}>
+            <Text style={styles.navText}>Settings</Text>
+          </TouchableOpacity>
+        </View>
+
+        <Text style={styles.sectionTitle}>Recent Parties ({parties.length})</Text>
         
         {loading ? (
           <ActivityIndicator size="large" color="#2563eb" style={{ marginTop: 40 }} />
@@ -92,6 +107,30 @@ const styles = StyleSheet.create({
   logoutText: {
     color: '#dc2626',
     fontWeight: '600',
+  },
+  navGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginBottom: 24,
+  },
+  navCard: {
+    width: '48%',
+    backgroundColor: '#3b82f6',
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 12,
+    alignItems: 'center',
+    shadowColor: '#3b82f6',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  navText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   content: {
     flex: 1,
