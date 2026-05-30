@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  password  String
+  createdAt DateTime  @default(now())
+
+  parties   Party[]
+  payments  Payment[]
+  journals  Journal[]
+  settings  Setting?
+}
+
+model Party {
+  id             String   @id @default(uuid())
+  userId         String
+  name           String
+  mobile         String?  @default("")
+  address        String?  @default("")
+  gst            String?  @default("")
+  openingBalance Decimal  @default(0) @db.Decimal(15,2)
+  balanceType    String   @default("Debit") // "Debit" | "Credit"
+  createdAt      DateTime @default(now())
+  
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Payment {
+  id              String   @id @default(uuid())
+  userId          String
+  voucherNo       String
+  date            DateTime @db.Date
+  partyName       String
+  paymentType     String   @default("Cash") // "Cash" | "Bank" | "UPI" | "Cheque"
+  transactionType String   // "Receive" | "Pay"
+  amount          Decimal  @db.Decimal(15,2)
+  remarks         String?  @default("")
+  createdAt       DateTime @default(now())
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, date])
+}
+
+model Journal {
+  id          String   @id @default(uuid())
+  userId      String
+  voucherNo   String
+  date        DateTime @db.Date
+  debitParty  String
+  creditParty String
+  amount      Decimal  @db.Decimal(15,2)
+  remarks     String?  @default("")
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, date])
+}
+
+model Setting {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  businessName String?  @default("")
+  address      String?  @default("")
+  gstin        String?  @default("")
+  phone        String?  @default("")
+  email        String?  @default("")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
